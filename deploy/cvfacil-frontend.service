@@ -1,0 +1,20 @@
+# Template de unit systemd para o frontend (Next.js - next start).
+# Preencher <CAMINHO_NA_VPS> e copiar para /etc/systemd/system/cvfacil-frontend.service
+# Requer build previo: npm ci && npm run build
+# Ativar com: sudo systemctl enable --now cvfacil-frontend
+
+[Unit]
+Description=CVFacil.NG Frontend (Next.js)
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=<CAMINHO_NA_VPS>/CVFacil.NG/frontend
+ExecStart=/usr/bin/npm run start
+Restart=on-failure
+RestartSec=5
+Environment=NODE_ENV=production
+Environment=PORT=3003
+
+[Install]
+WantedBy=multi-user.target

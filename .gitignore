@@ -1,0 +1,33 @@
+# Segredos - NUNCA commitar
+.env
+.env.local
+*.env.local
+
+# Dados pessoais de usuarios (fotos, documentos) - proibido versionar
+backend/uploads/
+uploads/
+
+# Build artifacts
+backend/target/
+frontend/.next/
+frontend/out/
+frontend/node_modules/
+node_modules/
+
+# Logs e output de execucao local
+*.log
+backend/startup_error.log
+backend/full_test_output.log
+backend/test_output_safe*.log
+
+# Dados locais / scratch
+backend/data/
+backend/scratch/
+scratch/
+*.zip
+
+# IDE / OS
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store

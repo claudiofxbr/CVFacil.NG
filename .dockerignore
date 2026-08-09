@@ -1,0 +1,11 @@
+frontend
+docs
+uploads
+backend/target
+backend/uploads
+backend/data
+backend/scratch
+scratch
+*.zip
+.git
+.vscode

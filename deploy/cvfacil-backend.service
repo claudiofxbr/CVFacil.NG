@@ -1,0 +1,19 @@
+# Template de unit systemd para o backend (via Docker Compose).
+# Preencher <CAMINHO_NA_VPS> e copiar para /etc/systemd/system/cvfacil-backend.service
+# Ativar com: sudo systemctl enable --now cvfacil-backend
+
+[Unit]
+Description=CVFacil.NG Backend (Spring Boot via Docker Compose)
+After=docker.service network-online.target
+Requires=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=<CAMINHO_NA_VPS>/CVFacil.NG
+ExecStart=/usr/bin/docker compose -f config/docker-compose.yml up -d
+ExecStop=/usr/bin/docker compose -f config/docker-compose.yml down
+TimeoutStartSec=0
+
+[Install]
+WantedBy=multi-user.target

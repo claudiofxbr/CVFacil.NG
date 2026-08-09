@@ -1,0 +1,30 @@
+name: K6 Load Test - Resume Import
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  load-test:
+    name: Execute Load Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Run k6 Load Test
+        uses: grafana/k6-action@v0.3.1
+        with:
+          filename: backend/tests/load/import-resume-load-test.js
+          # A URL da API deve ser configurada nos Secrets do GitHub como API_BASE_URL
+          flags: --env BASE_URL=${{ secrets.API_BASE_URL || 'https://staging-api.cvfacil.com/api' }}
+        
+      - name: Summary
+        if: always()
+        run: |
+          echo "### 📊 Resultados do Teste de Carga" >> $GITHUB_STEP_SUMMARY
+          echo "O teste de carga do pipeline de importação de currículos foi concluído." >> $GITHUB_STEP_SUMMARY
+          echo "Se os limites de latência (P95 < 20s) ou taxa de erro (> 2%) forem excedidos, este job falhará automaticamente." >> $GITHUB_STEP_SUMMARY
