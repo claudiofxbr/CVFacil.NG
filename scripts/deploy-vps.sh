@@ -5,7 +5,7 @@ set -euo pipefail
 
 # ===== CONFIGURACAO - preencher antes de usar =====
 REPO_URL="https://github.com/claudiofxbr/CVFacil.NG.git"
-DEPLOY_PATH="<CAMINHO_NA_VPS>/CVFacil.NG"
+DEPLOY_PATH="/opt/cvfacil-ng-v2"
 DOMAIN="cvfacil.xavierbr-vps.tech"
 BRANCH="main"
 # ====================================================
@@ -43,7 +43,8 @@ docker compose -f config/docker-compose.yml up -d --build
 echo ">>> Build do frontend (Next.js)..."
 cd frontend
 export NEXT_PUBLIC_API_URL="https://$DOMAIN/api"
-npm ci
+# --legacy-peer-deps: @react-three/drei tem peer dep de React incompativel com a versao usada no projeto
+npm ci --legacy-peer-deps
 npm run build
 cd ..
 
