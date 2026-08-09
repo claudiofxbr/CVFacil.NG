@@ -7,6 +7,6 @@ RUN mvn -q -B package -DskipTests
 
 FROM eclipse-temurin:17-jre
 WORKDIR /app
-COPY --from=build /app/target/cvfacil-ng-backend-1.0.0.jar app.jar
+COPY --from=build /app/target/cvfacil-backend-boot.jar app.jar
 EXPOSE 7777
 ENTRYPOINT ["java", "-jar", "app.jar"]
