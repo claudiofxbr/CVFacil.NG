@@ -2,22 +2,20 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { FileText, Edit, Trash2, Share2, RotateCcw, XCircle } from 'lucide-react';
 import { useRouter } from 'next/router';
-import { useAuth } from '../../context/AuthContext';
 import API_URL from '../../config';
 
 export default function ResumeCard({ resume, isTrash, onAction }) {
   const router = useRouter();
-  const { token } = useAuth();
 
   const handleDelete = async (e) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     if (confirm('Deseja mover este currículo para a lixeira?')) {
       try {
         const res = await fetch(`${API_URL}/resumes/${resume.id}`, {
           method: 'DELETE',
-          headers: { 'Authorization': `Bearer ${token}` }
+          credentials: 'include'
         });
         
         if (res.ok) {
@@ -38,7 +36,7 @@ export default function ResumeCard({ resume, isTrash, onAction }) {
     try {
       const res = await fetch(`${API_URL}/resumes/${resume.id}/restore`, {
         method: 'POST',
-        headers: { 'Authorization': `Bearer ${token}` }
+        credentials: 'include'
       });
       
       if (res.ok) {
@@ -59,7 +57,7 @@ export default function ResumeCard({ resume, isTrash, onAction }) {
       try {
         const res = await fetch(`${API_URL}/resumes/${resume.id}/hard`, {
           method: 'DELETE',
-          headers: { 'Authorization': `Bearer ${token}` }
+          credentials: 'include'
         });
         
         if (res.ok) {

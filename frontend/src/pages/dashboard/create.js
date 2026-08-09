@@ -5,13 +5,13 @@ import API_URL from '../../config';
 
 export default function CreateResume() {
   const router = useRouter();
-  const { user, token } = useAuth();
+  const { user } = useAuth();
 
   useEffect(() => {
     if (!router.isReady) return;
 
     const autoCreate = async () => {
-      if (!token) return; // Aguarda o token estar disponível no contexto
+      if (!user) return; // Aguarda o usuario estar disponível no contexto
 
       try {
         const { layout } = router.query;
@@ -25,9 +25,9 @@ export default function CreateResume() {
 
         const response = await fetch(`${API_URL}/resumes`, {
           method: 'POST',
-          headers: { 
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify(newResume),
         });
@@ -47,7 +47,7 @@ export default function CreateResume() {
     };
 
     autoCreate();
-  }, [user, token, router.isReady, router.query]);
+  }, [user, router.isReady, router.query]);
 
   return (
     <div style={{ 

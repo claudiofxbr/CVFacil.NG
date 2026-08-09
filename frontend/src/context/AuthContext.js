@@ -1,52 +1,42 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import API_URL from '../config';
 
 const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
-    const [token, setToken] = useState(null);
     const [loading, setLoading] = useState(true);
     const router = useRouter();
 
     useEffect(() => {
-        // Carregar sessão do sessionStorage (conforme solicitado: logar novamente após fechar aba)
+        // Apenas dados de exibição (nome, e-mail) ficam no sessionStorage.
+        // A autenticação real é feita pelo cookie httpOnly, que o JS nunca le.
         const savedUser = sessionStorage.getItem('cvfacil_user');
-        const savedToken = sessionStorage.getItem('cvfacil_token');
-
-        if (savedUser && savedToken) {
+        if (savedUser) {
             setUser(JSON.parse(savedUser));
-            setToken(savedToken);
         }
         setLoading(false);
     }, []);
 
-    const login = (userData, jwtToken) => {
+    const login = (userData) => {
         setUser(userData);
-        setToken(jwtToken);
         sessionStorage.setItem('cvfacil_user', JSON.stringify(userData));
-        sessionStorage.setItem('cvfacil_token', jwtToken);
     };
 
-    const logout = () => {
+    const logout = async () => {
+        try {
+            await fetch(`${API_URL}/auth/logout`, { method: 'POST', credentials: 'include' });
+        } catch (e) {
+            console.error('Falha ao invalidar sessão no servidor:', e);
+        }
         setUser(null);
-        setToken(null);
         sessionStorage.removeItem('cvfacil_user');
-        sessionStorage.removeItem('cvfacil_token');
         router.push('/login');
     };
 
-    const authenticatedFetch = async (url, options = {}) => {
-        const headers = {
-            'Content-Type': 'application/json',
-            ...options.headers,
-            'Authorization': `Bearer ${sessionStorage.getItem('cvfacil_token') || token}`
-        };
-        return fetch(url, { ...options, headers });
-    };
-
     return (
-        <AuthContext.Provider value={{ user, token, login, logout, authenticatedFetch, loading, isAuthenticated: !!token }}>
+        <AuthContext.Provider value={{ user, login, logout, loading, isAuthenticated: !!user }}>
             {children}
         </AuthContext.Provider>
     );

@@ -23,7 +23,7 @@ const themes = [
 export default function ResumeBuilder() {
   const router = useRouter();
   const { id } = router.query;
-  const { token, logout } = useAuth();
+  const { user, logout } = useAuth();
   const [resume, setResume] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showThemes, setShowThemes] = useState(false);
@@ -81,9 +81,9 @@ export default function ResumeBuilder() {
 
       // Se não houver local, buscar na API
       try {
-        if (!token) return;
+        if (!user) return;
         const res = await fetch(`${API_URL}/resumes/${id}`, {
-          headers: { 'Authorization': `Bearer ${token}` }
+          credentials: 'include'
         });
 
         if (res.status === 401) {
@@ -113,7 +113,7 @@ export default function ResumeBuilder() {
     };
 
     loadResume();
-  }, [id, token]);
+  }, [id, user]);
 
   // 2. Auto-Save Local: Salvar no localStorage sempre que o currículo mudar
   useEffect(() => {
@@ -131,12 +131,12 @@ export default function ResumeBuilder() {
     const syncToCloud = async () => {
       setSyncStatus('syncing');
       try {
-        if (!token) return;
+        if (!user) return;
         const response = await fetch(`${API_URL}/resumes/${id}`, {
           method: 'PUT',
+          credentials: 'include',
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify(resume),
         });
@@ -269,7 +269,7 @@ export default function ResumeBuilder() {
       
       fetch(`${API_URL}/storage/upload`, {
         method: 'POST',
-        headers: { 'Authorization': `Bearer ${token}` },
+        credentials: 'include',
         body: formData,
       }).catch(err => console.warn("Backup de foto no servidor falhou, mas a versão local está ativa.", err));
 

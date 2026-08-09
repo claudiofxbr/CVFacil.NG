@@ -20,16 +20,16 @@ export default function MyResumes() {
   const [importing, setImporting] = useState(false);
   const [error, setError] = useState(null);
   const router = useRouter();
-  const { token } = useAuth();
+  const { user } = useAuth();
   const fileInputRef = useRef(null);
 
   const fetchResumes = useCallback(async () => {
-    if (!token) return;
-    
+    if (!user) return;
+
     setLoading(true);
     try {
       const response = await fetch(`${API_URL}/resumes`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+        credentials: 'include'
       });
       
       if (response.ok) {
@@ -46,15 +46,15 @@ export default function MyResumes() {
     } finally {
       setLoading(false);
     }
-  }, [token]);
+  }, [user]);
 
   useEffect(() => {
-    if (!token) {
+    if (!user) {
       router.push('/login');
       return;
     }
     fetchResumes();
-  }, [token, fetchResumes, router]);
+  }, [user, fetchResumes, router]);
 
   const handleEdit = (id) => {
     router.push(`/resume/builder/${id}`);
@@ -63,7 +63,7 @@ export default function MyResumes() {
   const handleDownload = async (id) => {
     try {
       const response = await fetch(`${API_URL}/resumes/${id}/export`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+        credentials: 'include'
       });
       
       if (response.ok) {
@@ -91,7 +91,7 @@ export default function MyResumes() {
     try {
       const response = await fetch(`${API_URL}/resumes/${id}`, {
         method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${token}` }
+        credentials: 'include'
       });
       
       if (response.ok) {
@@ -120,7 +120,7 @@ export default function MyResumes() {
     try {
       const response = await fetch(`${API_URL}/resumes/import`, {
         method: 'POST',
-        headers: { 'Authorization': `Bearer ${token}` },
+        credentials: 'include',
         body: formData
       });
 

@@ -12,7 +12,7 @@ import API_URL from '../config';
 
 export default function Dashboard() {
   const router = useRouter();
-  const { user, token, logout } = useAuth();
+  const { user, logout } = useAuth();
   const [resumes, setResumes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [backendStatus, setBackendStatus] = useState('checking');
@@ -36,10 +36,10 @@ export default function Dashboard() {
   const fetchResumes = async () => {
     setLoading(true);
     try {
-      if (!user || !token) return;
+      if (!user) return;
 
       const response = await fetch(`${API_URL}/resumes`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+        credentials: 'include'
       });
       
       if (response.status === 401) {
@@ -70,9 +70,9 @@ export default function Dashboard() {
 
       const response = await fetch(`${API_URL}/resumes`, {
         method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(newResume),
       });
@@ -96,7 +96,7 @@ export default function Dashboard() {
   const handleDownload = async (id) => {
     try {
       const response = await fetch(`${API_URL}/resumes/${id}/export`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+        credentials: 'include'
       });
       
       if (!response.ok) throw new Error('Download failed');
@@ -121,7 +121,7 @@ export default function Dashboard() {
     try {
       const response = await fetch(`${API_URL}/resumes/${id}`, {
         method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${token}` }
+        credentials: 'include'
       });
       
       if (response.ok) {

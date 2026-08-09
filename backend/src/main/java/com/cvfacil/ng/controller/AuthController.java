@@ -140,6 +140,20 @@ public class AuthController {
                         .build());
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout() {
+        ResponseCookie expiredCookie = ResponseCookie.from("auth_token", "")
+                .httpOnly(true)
+                .path("/")
+                .maxAge(0)
+                .sameSite("Lax")
+                .build();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, expiredCookie.toString())
+                .build();
+    }
+
     @GetMapping("/profile-lookup")
     @org.springframework.security.access.prepost.PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> profileLookup(@RequestParam String email,

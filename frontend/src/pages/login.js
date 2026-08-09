@@ -43,6 +43,7 @@ export default function Login() {
     try {
       const response = await fetch(`${API_URL}/auth/login`, {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -51,7 +52,7 @@ export default function Login() {
 
       if (response.ok) {
         const authData = await response.json();
-        login(authData.user, authData.token);
+        login(authData.user);
         router.push('/dashboard');
       } else {
         const errorData = await response.json();
